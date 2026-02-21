@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>昕谣 · 小小心声 · Bilibili</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at 10% 30%, #fce2ff, #ecd4ff 40%, #d9c2fa 80%, #c7b0f0);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      line-height: 1.5;
+      color: #2e2938;
+      position: relative;
+      overflow-x: auto;
+    }
+    /* 漂浮装饰 */
+    body::before {
+      content: '';
+      position: absolute;
+      width: 40vmax;
+      height: 40vmax;
+      background: radial-gradient(circle, rgba(255, 215, 245, 0.4) 0%, transparent 70%);
+      top: -10vh;
+      right: -5vw;
+      border-radius: 50%;
+      z-index: 0;
+      pointer-events: none;
+    }
+    body::after {
+      content: '';
+      position: absolute;
+      width: 30vmax;
+      height: 30vmax;
+      background: radial-gradient(circle, rgba(190, 170, 255, 0.3) 0%, transparent 70%);
+      bottom: -10vh;
+      left: -5vw;
+      border-radius: 50%;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .glass-card {
+      position: relative;
+      z-index: 10;
+      max-width: 960px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.28);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border-radius: 56px;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 0 30px 50px -20px rgba(92, 60, 125, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+      padding: 2.5rem 2.2rem;
+      transition: all 0.3s ease;
+      color: #2a2438;
+    }
+    .note-deco {
+      position: absolute;
+      font-size: 2rem;
+      color: rgba(255, 255, 255, 0.4);
+      z-index: 5;
+      user-select: none;
+      pointer-events: none;
+    }
+    .note-1 { top: 20px; left: 30px; transform: rotate(-10deg); }
+    .note-2 { bottom: 20px; right: 40px; transform: rotate(15deg); }
+    .note-3 { top: 120px; right: 60px; font-size: 2.8rem; opacity: 0.3; }
+    .avatar-wrapper {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 1.8rem;
+      filter: drop-shadow(0 12px 15px rgba(170, 120, 220, 0.4));
+    }
+    .avatar-circle {
+      width: 150px;
+      height: 150px;
+      background: linear-gradient(145deg, #f8c7f0, #c69bff, #a57cf2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 4px solid rgba(255, 255, 255, 0.8);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    .avatar-initial {
+      font-size: 5.2rem;
+      font-weight: 500;
+      color: white;
+      text-shadow: 2px 4px 10px rgba(115, 70, 170, 0.4);
+      line-height: 1;
+      background: linear-gradient(135deg, #ffffff, #ffe9fb);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 2px 5px #bba5ff);
+    }
+    .name-section {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    .name {
+      font-size: 3.2rem;
+      font-weight: 650;
+      letter-spacing: 2px;
+      background: linear-gradient(130deg, #352b4b, #6d469b, #b37fdd);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.2;
+      text-shadow: 0 2px 10px rgba(210, 160, 255, 0.5);
+    }
+    .subname {
+      font-size: 1.3rem;
+      color: #4a385c;
+      background: rgba(255, 245, 255, 0.7);
+      display: inline-block;
+      padding: 0.2rem 1.8rem;
+      border-radius: 40px;
+      backdrop-filter: blur(4px);
+      margin-top: 0.3rem;
+      font-weight: 400;
+      border: 1px solid rgba(255, 255, 255, 0.8);
+    }
+    .tagline {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem 1.5rem;
+      flex-wrap: wrap;
+      margin: 1.5rem 0 1.2rem;
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: #3c2d4f;
+    }
+    .tagline i {
+      color: #a069d4;
+      font-size: 1.4rem;
+      background: rgba(255, 255, 255, 0.6);
+      padding: 0.4rem;
+      border-radius: 50%;
+      width: 2.4rem;
+      text-align: center;
+    }
+    .tagline span {
+      background: rgba(255, 240, 255, 0.6);
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+    }
+    .tag-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.8rem;
+      margin: 2rem 0 1.8rem;
+    }
+    .tag-item {
+      background: rgba(255, 235, 255, 0.75);
+      backdrop-filter: blur(4px);
+      padding: 0.5rem 1.4rem;
+      border-radius: 50px;
+      font-size: 0.95rem;
+      font-weight: 550;
+      color: #3b2452;
+      border: 1px solid rgba(255, 220, 255, 0.9);
+      box-shadow: 0 5px 12px rgba(158, 90, 230, 0.1);
+      transition: all 0.2s;
+    }
+    .tag-item i { margin-right: 6px; color: #b273e8; }
+    .tag-item:hover {
+      background: white;
+      border-color: #dbbaff;
+      transform: translateY(-2px);
+    }
+    .skills-panel {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin: 2.2rem 0 2rem;
+    }
+    .skill-card {
+      flex: 1 1 200px;
+      background: rgba(255, 250, 255, 0.4);
+      backdrop-filter: blur(8px);
+      border-radius: 36px;
+      padding: 1.8rem 1rem;
+      text-align: center;
+      border: 1.5px solid rgba(255, 255, 255, 0.7);
+      box-shadow: 0 8px 18px -6px rgba(115, 60, 180, 0.3);
+    }
+    .skill-icon {
+      font-size: 2.6rem;
+      color: #6d39a3;
+      background: rgba(255, 245, 255, 0.9);
+      width: 5rem;
+      height: 5rem;
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+      box-shadow: 0 5px 0 #e1c6ff;
+    }
+    .skill-card h3 {
+      font-size: 1.8rem;
+      font-weight: 650;
+      margin-bottom: 0.4rem;
+      background: linear-gradient(145deg, #562b7c, #8f5bc2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .skill-card p {
+      color: #3d2c4d;
+      font-weight: 400;
+      font-size: 1rem;
+    }
+    /* 简洁信息条 - 代替粉丝数据 */
+    .info-message {
+      background: rgba(245, 225, 255, 0.5);
+      backdrop-filter: blur(4px);
+      padding: 1rem 1.8rem;
+      border-radius: 60px;
+      margin: 1.8rem 0 2rem;
+      border: 1px solid #ffffffb3;
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: #3d2957;
+    }
+    .info-message i {
+      color: #b77ef0;
+      margin-right: 10px;
+    }
+    .action-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1.2rem;
+      margin: 2rem 0 2.5rem;
+    }
+    .btn {
+      border: none;
+      background: rgba(255, 245, 255, 0.8);
+      backdrop-filter: blur(6px);
+      padding: 1rem 2.2rem;
+      border-radius: 48px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: 0.2s;
+      border: 1px solid white;
+      color: #331f4a;
+      box-shadow: 0 8px 16px -10px #a176c7;
+      text-decoration: none;
+    }
+    .btn i { font-size: 1.4rem; }
+    .btn-primary {
+      background: linear-gradient(125deg, #d9adff, #c28bff);
+      color: white;
+      border: 1px solid #ffdbff;
+      box-shadow: 0 12px 24px -10px #ac78e0;
+    }
+    .btn-primary i { color: white; }
+    .btn:hover {
+      transform: translateY(-3px);
+      background: white;
+      border-color: #dbb5ff;
+    }
+    .btn-primary:hover {
+      background: linear-gradient(125deg, #e4beff, #d19eff);
+      box-shadow: 0 18px 28px -8px #c49eff;
+    }
+    /* 极简动态区（无数据） */
+    .recent-section {
+      margin: 2.8rem 0 1rem;
+    }
+    .section-label {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #4f3470;
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.5);
+      padding: 0.4rem 1.6rem;
+      border-radius: 40px;
+      width: fit-content;
+      backdrop-filter: blur(4px);
+    }
+    .recent-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+    }
+    .recent-card {
+      background: rgba(250, 240, 255, 0.45);
+      backdrop-filter: blur(4px);
+      border-radius: 32px;
+      padding: 1rem 0.8rem 0.8rem;
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      text-align: center;
+    }
+    .recent-thumb {
+      background: linear-gradient(145deg, #cfaaff, #e8c3ff);
+      border-radius: 24px;
+      height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 2rem;
+      border: 2px solid white;
+      margin-bottom: 0.7rem;
+      box-shadow: 0 8px 12px #ba9cdb7a;
+    }
+    .recent-card p {
+      font-weight: 600;
+      color: #322842;
+      margin: 0.5rem 0 0.2rem;
+    }
+    .footer-note {
+      display: flex;
+      justify-content: center;
+      margin-top: 3rem;
+      font-size: 0.9rem;
+      color: #4a2d6a;
+      background: rgba(255, 255, 255, 0.35);
+      backdrop-filter: blur(4px);
+      padding: 0.6rem 1.8rem;
+      border-radius: 60px;
+      width: fit-content;
+      margin-left: auto;
+      margin-right: auto;
+      border: 1px solid rgba(255, 255, 255, 0.7);
+    }
+    .footer-note i { margin: 0 6px; color: #bb7eff; }
+    @media (max-width: 550px) {
+      .glass-card { padding: 1.8rem 1.4rem; border-radius: 40px; }
+      .name { font-size: 2.5rem; }
+      .avatar-circle { width: 120px; height: 120px; }
+      .avatar-initial { font-size: 4rem; }
+      .skills-panel { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <div class="note-deco note-1"><i class="fa-solid fa-music"></i></div>
+  <div class="note-deco note-2"><i class="fa-solid fa-headphones"></i></div>
+  <div class="note-deco note-3"><i class="fa-solid fa-circle-nodes"></i></div>
+
+  <main class="glass-card">
+    <div class="avatar-wrapper">
+      <div class="avatar-circle">
+        <span class="avatar-initial">昕</span>
+      </div>
+    </div>
+
+    <div class="name-section">
+      <h1 class="name">昕谣</h1>
+      <div class="subname">XinYao · 杂谈</div>
+    </div>
+
+    <div class="tagline">
+      <i class="fa-solid fa-message"></i>
+      <span>能杂谈 · 也能唱</span>
+      <i class="fa-solid fa-microphone-lines"></i>
+    </div>
+
+    <div style="text-align: center; margin: 0.2rem 0 0.8rem;">
+      <span style="background: rgba(230, 210, 255, 0.7); padding: 0.3rem 1.6rem; border-radius: 30px; font-weight: 500; backdrop-filter: blur(4px);">
+        <i class="fa-brands fa-bilibili" style="color: #cc88ff;"></i> 在B站悄悄长大 · 感谢遇见
+      </span>
+    </div>
+
+    <div class="tag-cloud">
+      <span class="tag-item"><i class="fa-regular fa-comment"></i> 杂谈势</span>
+      
+      <span class="tag-item"><i class="fa-regular fa-star"></i> 治愈系</span>
+      <span class="tag-item"><i class="fa-regular fa-moon"></i> 不定时</span>
+      <span class="tag-item"><i class="fa-regular fa-heart"></i> 话痨</span>
+    </div>
+
+    <div class="skills-panel">
+      <div class="skill-card">
+        <div class="skill-icon"><i class="fa-regular fa-message"></i></div>
+        <h3>杂谈·陪伴</h3>
+        <p>生活趣事、日常闲聊<br>像朋友一样陪你</p>
+      </div>
+     
+    <!-- 温和的信息条，无虚假数据 -->
+    <div class="info-message">
+      <i class="fa-regular fa-clock"></i> 直播时间固定，来了就是缘分
+    </div>
+
+    <!-- 两个主要按钮，链接真实 -->
+    <div class="action-buttons">
+      <a href="https://space.bilibili.com/3691000883054881" class="btn btn-primary" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-bilibili"></i> B站主页</a>
+      <a href="https://live.bilibili.com/1714603289" class="btn" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-video"></i> 进入直播间</a>
+    </div>
+
+    <!-- 最近动态（无数据，只示意） -->
+    <div class="recent-section">
+      <div class="section-label"><i class="fa-regular fa-note-sticky"></i> 最近的小动态</div>
+      <div class="recent-grid">
+        <div class="recent-card">
+          <div class="recent-thumb"><i class="fa-solid fa-message"></i></div>
+          <p>【杂谈】今晚聊点轻松的</p>
+        </div>
+        <div class="recent-card">
+          <div class="recent-thumb"><i class="fa-solid fa-music"></i></div>
+          <p>=1</p>
+        </div>
+        <div class="recent-card">
+          <div class="recent-thumb"><i class="fa-regular fa-face-smile"></i></div>
+          <p>感谢支持</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-note">
+      <i class="fa-regular fa-heart"></i> 昕谣 · 在B站慢慢成长 <i class="fa-regular fa-heart"></i>
+    </div>
+    <div style="height: 5px; width: 80px; background: rgba(255,255,255,0.5); border-radius: 10px; margin: 1.5rem auto 0.2rem;"></div>
+  </main>
+</body>
+</html>
